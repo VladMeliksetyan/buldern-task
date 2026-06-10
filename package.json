@@ -1,0 +1,10 @@
+{
+  "name": "buldern-task",
+  "private": true,
+  "scripts": {
+    "up": "docker compose up",
+    "up:detached": "docker compose up -d",
+    "down": "docker compose down",
+    "seed:example": "docker compose exec backend npm run seed:example"
+  }
+}

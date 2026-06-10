@@ -1,0 +1,206 @@
+# Authentication
+
+mutation Register {
+  register(input: {
+    email: "owner@demo.com"
+    password: "password123"
+    name: "Project Owner"
+  }) {
+    token
+    user {
+      id
+      email
+      name
+    }
+  }
+}
+
+mutation Login {
+  login(input: {
+    email: "owner@demo.com"
+    password: "password123"
+  }) {
+    token
+    user {
+      id
+      email
+    }
+  }
+}
+
+query Me {
+  me {
+    id
+    email
+    name
+  }
+}
+
+# Projects (requires Authorization: Bearer <token>)
+
+mutation CreateProject {
+  createProject(input: {
+    name: "Downtown Office"
+    location: "Oslo, Norway"
+  }) {
+    id
+    name
+    location
+    owner {
+      email
+    }
+  }
+}
+
+query Projects {
+  projects {
+    id
+    name
+    location
+    owner {
+      email
+    }
+    members {
+      user {
+        email
+      }
+    }
+  }
+}
+
+query ProjectDetails($id: ID!) {
+  project(id: $id) {
+    id
+    name
+    location
+    expenses {
+      id
+      name
+      amount
+      createdBy {
+        email
+      }
+    }
+    incomes {
+      id
+      name
+      amount
+    }
+  }
+}
+
+mutation UpdateProject($id: ID!) {
+  updateProject(id: $id, input: {
+    name: "Downtown Office - Phase 2"
+    location: "Oslo CBD"
+  }) {
+    id
+    name
+    location
+  }
+}
+
+mutation DeleteProject($id: ID!) {
+  deleteProject(id: $id)
+}
+
+# Invitations
+
+mutation InviteUser($projectId: ID!) {
+  inviteUser(input: {
+    projectId: $projectId
+    email: "member@demo.com"
+  }) {
+    id
+    email
+    status
+    project {
+      name
+    }
+  }
+}
+
+query MyInvitations {
+  myInvitations {
+    id
+    email
+    status
+    project {
+      id
+      name
+    }
+    inviter {
+      email
+    }
+  }
+}
+
+mutation AcceptInvitation($id: ID!) {
+  acceptInvitation(id: $id) {
+    id
+    status
+  }
+}
+
+mutation RejectInvitation($id: ID!) {
+  rejectInvitation(id: $id) {
+    id
+    status
+  }
+}
+
+# Expenses & incomes
+
+mutation CreateExpense($projectId: ID!) {
+  createExpense(input: {
+    projectId: $projectId
+    name: "Concrete"
+    amount: 1500.50
+  }) {
+    id
+    name
+    amount
+  }
+}
+
+mutation CreateIncome($projectId: ID!) {
+  createIncome(input: {
+    projectId: $projectId
+    name: "Client Payment"
+    amount: 5000
+  }) {
+    id
+    name
+    amount
+  }
+}
+
+query Expenses($projectId: ID!) {
+  expenses(projectId: $projectId) {
+    id
+    name
+    amount
+    createdBy {
+      email
+    }
+  }
+}
+
+# Budget report
+
+query BudgetReport($projectId: ID!) {
+  budgetReport(projectId: $projectId) {
+    projectId
+    items {
+      name
+      totalExpenses
+      totalIncomes
+      difference
+    }
+    summary {
+      totalExpenses
+      totalIncomes
+      difference
+    }
+  }
+}
